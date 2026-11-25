@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SeleniumBase-RS Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" aria-label="Main Navigation">
+      <div class="brand">
+        <div class="brand-text">
+          <h2>SeleniumBase-RS</h2>
+          <span class="version-label">v0.9.1 Studio</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="studio">
+          Browser Studio
+        </button>
+        <button class="nav-item" data-tab="extractor">
+          AI Web Extractor
+        </button>
+        <button class="nav-item" data-tab="converter">
+          Code Converter
+        </button>
+        <button class="nav-item" data-tab="crawler">
+          Web Crawler
+        </button>
+        <button class="nav-item" data-tab="network">
+          BiDi &amp; HAR Stream
+        </button>
+        <button class="nav-item" data-tab="multilogin">
+          Multi-Account Sessions
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="engine-indicator">
+          <span class="status-dot green"></span>
+          <span>Engine: <strong id="current-engine-label">Pure CDP</strong></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Header Bar -->
+      <header class="topbar">
+        <div class="page-title">
+          <h1 id="tab-heading">Browser Studio</h1>
+          <p id="tab-subtitle">Visual browser automation and interactive step execution.</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-secondary" id="btn-theme-toggle">Theme</button>
+          <a href="https://mustcodeal-seleniumbase-rs.docs7.io" target="_blank" rel="noopener" class="btn btn-outline">Documentation</a>
+        </div>
+      </header>
+
+      <!-- TAB 1: STUDIO -->
+      <section class="tab-pane active" id="pane-studio">
+        <div class="grid-2col">
+          <!-- Control Panel -->
+          <div class="card">
+            <h3>Session Configuration</h3>
+            <div class="form-group">
+              <label for="studio-url">Target URL</label>
+              <input type="url" id="studio-url" class="form-input" placeholder="https://example.com" value="https://nowsecure.nl">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="studio-engine">Engine Mode</label>
+                <select id="studio-engine" class="form-select">
+                  <option value="cdp">Pure CDP Mode (Fastest)</option>
+                  <option value="uc" selected>UC Mode (Undetected Stealth)</option>
+                  <option value="webdriver">WebDriver (thirtyfour)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="studio-persona">OS Fingerprint Persona</label>
+                <select id="studio-persona" class="form-select">
+                  <option value="windows" selected>Windows 11 / Chrome</option>
+                  <option value="macos">macOS Sonoma / Safari</option>
+                  <option value="linux">Linux Ubuntu / Chromium</option>
+                  <option value="android">Android 14 / Pixel</option>
+                  <option value="ios">iOS 17 / iPhone</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="studio-proxy">Proxy Server (Optional)</label>
+                <input type="text" id="studio-proxy" class="form-input" placeholder="http://host:port or socks5://...">
+              </div>
+              <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="studio-headless" checked> Headless Mode
+                </label>
+              </div>
+            </div>
+
+            <div class="action-bar">
+              <button class="btn btn-primary" id="btn-studio-run">Launch Session</button>
+              <button class="btn btn-secondary" id="btn-studio-screenshot">Capture Screenshot</button>
+              <button class="btn btn-secondary" id="btn-studio-solve">Bypass Challenge</button>
+            </div>
+
+            <hr class="divider mt-4 mb-3">
+
+            <!-- Interactive Step Automation Controller -->
+            <h3>Execute Step Action</h3>
+            <p class="section-desc mb-3">Run browser actions interactively against the active session without code.</p>
+
+            <div class="form-row">
+              <div class="form-group" style="width: 160px;">
+                <label for="step-action">Action</label>
+                <select id="step-action" class="form-select">
+                  <option value="click">Click Element</option>
+                  <option value="type">Type Text</option>
+                  <option value="wait">Wait for Element</option>
+                  <option value="assert_text">Assert Text</option>
+                  <option value="assert_element">Assert Element</option>
+                  <option value="scroll_down">Scroll Down</option>
+                  <option value="scroll_up">Scroll Up</option>
+                  <option value="solve">Bypass Challenge</option>
+                </select>
+              </div>
+              <div class="form-group flex-grow">
+                <label for="step-selector">Selector / Expression</label>
+                <input type="text" id="step-selector" class="form-input font-mono" placeholder="#login-btn or [data-testid='submit']">
+              </div>
+            </div>
+
+            <div class="form-row" id="step-value-row">
+              <div class="form-group flex-grow">
+                <label for="step-value">Input Value (for Type or Assert)</label>
+                <input type="text" id="step-value" class="form-input" placeholder="Text to type or assert...">
+              </div>
+              <div class="form-group" style="align-self: flex-end;">
+                <button class="btn btn-primary" id="btn-run-step">Run Step</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Viewport / Console Output -->
+          <div class="card viewport-card">
+            <div class="card-header">
+              <h3>Live Viewport &amp; Inspection</h3>
+              <span class="badge" id="viewport-status">Ready</span>
+            </div>
+            <div class="viewport-placeholder" id="viewport-preview">
+              <div class="empty-state">
+                <p>Click "Launch Session" to start automation and render preview.</p>
+              </div>
+            </div>
+            <div class="log-stream" id="studio-logs">
+              <div class="log-entry system">[SYSTEM] SeleniumBase-RS Web Studio initialized.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: AI WEB EXTRACTOR -->
+      <section class="tab-pane" id="pane-extractor">
+        <div class="card">
+          <h3>AI Web Extraction Studio</h3>
+          <p class="section-desc">Extract token-efficient, LLM-ready Markdown and structured tables directly from live web pages using zero-copy PageArena.</p>
+          <div class="form-row">
+            <input type="url" id="extract-url" class="form-input flex-grow" placeholder="https://example.com" value="https://en.wikipedia.org/wiki/Rust_(programming_language)">
+            <button class="btn btn-primary" id="btn-extract-markdown">Extract Markdown</button>
+            <button class="btn btn-secondary" id="btn-extract-table">Extract Tables</button>
+            <button class="btn btn-outline" id="btn-extract-metadata">Extract Metadata</button>
+          </div>
+
+          <div class="metrics-strip mt-3">
+            <div class="metric-item">
+              <span class="metric-label">Estimated Raw DOM Tokens</span>
+              <span class="metric-value font-mono" id="tokens-raw">--</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Extracted PageArena Tokens</span>
+              <span class="metric-value font-mono" id="tokens-md">--</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Context Reduction</span>
+              <span class="metric-value font-mono highlight-metric" id="tokens-saved">--</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Cost Optimization</span>
+              <span class="metric-value font-mono" id="tokens-cost">--</span>
+            </div>
+          </div>
+
+          <!-- Live Token Comparison Meter Bar -->
+          <div class="token-meter-container mt-3" id="token-meter-box" style="display: none;">
+            <div class="token-meter-labels font-mono">
+              <span>Token Footprint Comparison</span>
+              <span id="token-ratio-label">0%</span>
+            </div>
+            <div class="token-meter-track">
+              <div class="token-meter-fill-retained" id="token-bar-retained" style="width: 12%;"></div>
+              <div class="token-meter-fill-saved" id="token-bar-saved" style="width: 88%;"></div>
+            </div>
+            <div class="token-meter-legend">
+              <span class="legend-item"><span class="legend-swatch retained"></span> Markdown Retained Context</span>
+              <span class="legend-item"><span class="legend-swatch saved"></span> Pruned DOM Noise (88% Saved)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2col mt-4">
+          <div class="card">
+            <div class="card-header">
+              <h3>LLM Markdown Output</h3>
+              <button class="btn btn-sm" id="btn-copy-markdown">Copy Markdown</button>
+            </div>
+            <pre class="code-view" id="markdown-output">Click "Extract Markdown" to generate clean LLM context.</pre>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Structured JSON Output</h3>
+              <button class="btn btn-sm" id="btn-copy-json">Copy JSON</button>
+            </div>
+            <pre class="code-view json-view" id="structured-output">{}</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: CODE CONVERTER -->
+      <section class="tab-pane" id="pane-converter">
+        <div class="card">
+          <div class="card-header">
+            <h3>Script to Rust Test Converter</h3>
+          </div>
+          <p class="section-desc">Convert Python Selenium, SeleniumBase, Playwright, or Puppeteer scripts into idiomatic Rust tests using <code>sbrs import</code>.</p>
+
+          <div class="form-row mt-3 mb-3">
+            <div class="form-group" style="width: 240px;">
+              <label for="converter-lang">Source Format</label>
+              <select id="converter-lang" class="form-select">
+                <option value="python" selected>Python (SeleniumBase / BaseCase)</option>
+                <option value="playwright-ts">Playwright (TypeScript / JS)</option>
+                <option value="puppeteer">Puppeteer (JavaScript)</option>
+                <option value="recorder-json">Chrome DevTools Recorder JSON</option>
+              </select>
+            </div>
+            <div class="form-group flex-grow">
+              <label for="converter-template">Sample Template</label>
+              <select id="converter-template" class="form-select">
+                <option value="">-- Load Sample Script --</option>
+                <option value="sb-basecase">SeleniumBase BaseCase - Login Test</option>
+                <option value="sb-uc">SeleniumBase UC Mode - Turnstile Verification</option>
+                <option value="pw-basic">Playwright TypeScript - Navigation &amp; Assertions</option>
+                <option value="pup-basic">Puppeteer - Page Screenshot &amp; Cookies</option>
+              </select>
+            </div>
+            <div class="form-group" style="align-self: flex-end;">
+              <button class="btn btn-primary" id="btn-run-convert">Convert Code</button>
+            </div>
+          </div>
+
+          <div class="grid-2col mt-4">
+            <div>
+              <label class="label-heading"><strong>Source Script</strong></label>
+              <textarea id="converter-input" class="code-editor" rows="18" placeholder="from seleniumbase import BaseCase...">from seleniumbase import BaseCase
+
+class MyTest(BaseCase):
+    def test_example(self):
+        self.open("https://nowsecure.nl")
+        self.assert_text("OH YEAH", "h1")
+        self.human_click("#demo")</textarea>
+            </div>
+
+            <div>
+              <div class="card-header">
+                <label class="label-heading"><strong>Generated Rust Test (seleniumbase-rs)</strong></label>
+                <button class="btn btn-sm" id="btn-copy-rust">Copy Rust</button>
+              </div>
+              <textarea id="converter-output" class="code-editor" rows="18" readonly placeholder="// Converted Rust test will appear here..."></textarea>
+            </div>
+          </div>
+
+          <!-- Diagnostics Area -->
+          <div class="card mt-3" id="diagnostics-card" style="display: none;">
+            <h4>Migration Diagnostics</h4>
+            <div class="diagnostics-list font-mono" id="diagnostics-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: CRAWLER -->
+      <section class="tab-pane" id="pane-crawler">
+        <div class="card">
+          <h3>Web Crawler &amp; Sitemap Explorer</h3>
+          <p class="section-desc">Discover sitemap paths, extract metadata, and crawl hierarchical site structures.</p>
+          <div class="form-row">
+            <input type="url" id="crawler-start-url" class="form-input flex-grow" placeholder="https://seleniumbase.io" value="https://seleniumbase.io">
+            <input type="number" id="crawler-max-depth" class="form-input" style="width: 120px;" min="1" max="5" value="2" title="Max Depth">
+            <button class="btn btn-primary" id="btn-start-crawl">Start Crawl</button>
+          </div>
+        </div>
+
+        <div class="stats-row mt-4">
+          <div class="stat-card">
+            <span class="stat-num" id="stat-pages">0</span>
+            <span class="stat-label">Discovered Pages</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num" id="stat-frontier">0</span>
+            <span class="stat-label">Queue Length</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num" id="stat-status">Idle</span>
+            <span class="stat-label">Crawler Status</span>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <h3>Crawl Frontier &amp; Visited Links</h3>
+          <table class="data-table" id="crawl-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>URL</th>
+                <th>Depth</th>
+                <th>Title</th>
+              </tr>
+            </thead>
+            <tbody id="crawl-tbody">
+              <tr>
+                <td colspan="4" class="text-center">No active crawl running.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: BIDI & HAR STREAM -->
+      <section class="tab-pane" id="pane-network">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>WebDriver BiDi &amp; Streaming HAR Inspector</h3>
+              <p class="section-desc" style="margin-bottom: 0;">Zero-copy streaming network events captured during active browser sessions.</p>
+            </div>
+            <div class="topbar-actions">
+              <button class="btn btn-secondary btn-sm" id="btn-toggle-stream">Stream: Active</button>
+              <button class="btn btn-secondary btn-sm" id="btn-clear-network">Clear</button>
+              <button class="btn btn-primary btn-sm" id="btn-export-jsonl">Export JSONL</button>
+            </div>
+          </div>
+
+          <!-- BiDi Telemetry Band -->
+          <div class="telemetry-band mt-3 font-mono">
+            <div class="telemetry-pill">
+              <span class="pill-dot green"></span>
+              <span>network.beforeRequestSent</span>
+            </div>
+            <div class="telemetry-pill">
+              <span class="pill-dot green"></span>
+              <span>network.responseCompleted</span>
+            </div>
+            <div class="telemetry-pill">
+              <span class="pill-dot green"></span>
+              <span>log.entryAdded</span>
+            </div>
+            <div class="telemetry-stat" id="bidi-stats">
+              <span>Packets: <strong id="bidi-packet-count">0</strong></span>
+              <span>Transferred: <strong id="bidi-bytes-transferred">0 KB</strong></span>
+            </div>
+          </div>
+
+          <!-- Network Filter Bar -->
+          <div class="filter-bar mt-3">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="fetch">Fetch / XHR</button>
+            <button class="filter-btn" data-filter="document">Doc</button>
+            <button class="filter-btn" data-filter="script">JS</button>
+            <button class="filter-btn" data-filter="stylesheet">CSS</button>
+            <button class="filter-btn" data-filter="websocket">WebSocket</button>
+          </div>
+
+          <table class="data-table mt-3" id="network-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">Method</th>
+                <th style="width: 80px;">Status</th>
+                <th>URL</th>
+                <th style="width: 100px;">Type</th>
+                <th style="width: 90px;">Time</th>
+              </tr>
+            </thead>
+            <tbody id="network-tbody">
+              <tr>
+                <td colspan="5" class="text-center">No network events captured yet. Launch a session or step action to stream traffic.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 6: MULTI-ACCOUNT SESSIONS -->
+      <section class="tab-pane" id="pane-multilogin">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Multi-Account Concurrent Login Orchestrator</h3>
+              <p class="section-desc" style="margin-bottom: 0;">
+                Execute simultaneous authenticated sessions across isolated browser contexts with cryptographic separation and zero cookie leakage.
+              </p>
+            </div>
+            <button class="btn btn-primary" id="btn-web-multilogin-run">Launch Concurrent Sessions</button>
+          </div>
+
+          <div class="form-row mt-3">
+            <div class="form-group flex-grow">
+              <label for="web-ml-url">Portal Target URL</label>
+              <input type="url" id="web-ml-url" class="form-input font-mono" value="https://seleniumbase.io/simple/login">
+            </div>
+            <div class="form-group" style="width: 180px;">
+              <label for="web-ml-engine">Engine Mode</label>
+              <select id="web-ml-engine" class="form-select">
+                <option value="cdp" selected>Pure CDP (Pool)</option>
+                <option value="uc">UC Stealth</option>
+              </select>
+            </div>
+          </div>
+
+          <h4 class="mt-4 mb-2">Configured Persona Accounts</h4>
+          <table class="data-table" id="web-persona-table">
+            <thead>
+              <tr>
+                <th>Persona</th>
+                <th>Role</th>
+                <th>Username</th>
+                <th>OS &amp; Engine</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="web-persona-tbody">
+              <tr>
+                <td><strong>Alice Admin</strong></td>
+                <td><span class="badge badge-primary">ADMIN</span></td>
+                <td class="font-mono">alice_admin</td>
+                <td>Windows 11 / Chrome (Pure CDP)</td>
+                <td><span class="badge" id="web-pstatus-1">IDLE</span></td>
+              </tr>
+              <tr>
+                <td><strong>Bob Auditor</strong></td>
+                <td><span class="badge badge-warning">AUDITOR</span></td>
+                <td class="font-mono">bob_auditor</td>
+                <td>macOS Sonoma / Safari (Pure CDP)</td>
+                <td><span class="badge" id="web-pstatus-2">IDLE</span></td>
+              </tr>
+              <tr>
+                <td><strong>Carol Operator</strong></td>
+                <td><span class="badge">OPERATOR</span></td>
+                <td class="font-mono">carol_operator</td>
+                <td>Linux Ubuntu / Chromium (Pure CDP)</td>
+                <td><span class="badge" id="web-pstatus-3">IDLE</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Live Telemetry & Stepper -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h3>Concurrent Execution Stepper &amp; Context Telemetry</h3>
+            <span class="badge" id="web-ml-status-badge">Standby</span>
+          </div>
+
+          <div class="web-stepper-deck" id="web-stepper-deck">
+            <!-- Dynamic persona stepper cards populated by JS -->
+          </div>
+
+          <!-- Pairwise Cookie Isolation Verification Table -->
+          <div class="isolation-section mt-4" id="web-isolation-box" style="display: none;">
+            <div class="card-header">
+              <h4>Pairwise Cookie Isolation Verification Matrix</h4>
+              <button class="btn btn-secondary btn-sm" id="btn-web-reverify">Re-verify Partitions</button>
+            </div>
+            <p class="section-desc mb-2">Cryptographic verification that distinct context IDs share 0 cookies or session tokens.</p>
+
+            <table class="data-table font-mono" id="web-isolation-table">
+              <thead>
+                <tr>
+                  <th>Comparison Pair</th>
+                  <th>Context IDs</th>
+                  <th>Cookie Count</th>
+                  <th>Shared Tokens</th>
+                  <th>Isolation Verdict</th>
+                </tr>
+              </thead>
+              <tbody id="web-isolation-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

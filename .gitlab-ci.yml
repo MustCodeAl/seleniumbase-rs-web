@@ -1,0 +1,44 @@
+variables:
+  RUST_VERSION: "1.100"
+  CARGO_INCREMENTAL: "0"
+  CARGO_PROFILE_DEV_DEBUG: "0"
+  CARGO_BUILD_JOBS: "2"
+
+stages:
+  - check
+  - test
+
+default:
+  image: rust:${RUST_VERSION}-bookworm
+  before_script:
+    - cargo --version
+
+fmt:
+  stage: check
+  script:
+    - cargo fmt --all -- --check
+
+clippy:
+  stage: check
+  script:
+    - cargo clippy --all-targets -- -D warnings
+
+test:
+  stage: test
+  script:
+    - cargo test --offline
+
+frontend:
+  stage: check
+  image: node:20-bookworm
+  script:
+    - npm ci
+    - npm run typecheck
+  only:
+    changes:
+      - "*.ts"
+      - "*.tsx"
+      - "package.json"
+      - "tsconfig.json"
+      - "src/**/*.ts"
+      - "public/**"

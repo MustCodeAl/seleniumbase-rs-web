@@ -1,0 +1,6 @@
+/target/
+/target_local/
+/dist/
+/node_modules/
+.env
+*.pem
