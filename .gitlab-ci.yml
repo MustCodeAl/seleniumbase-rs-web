@@ -26,13 +26,13 @@ clippy:
 test:
   stage: test
   script:
-    - cargo test --offline
+    - cargo test
 
 frontend:
   stage: check
   image: node:20-bookworm
   script:
-    - npm ci
+    - if [ -f package-lock.json ]; then npm ci; else npm install; fi
     - npm run typecheck
   only:
     changes:
