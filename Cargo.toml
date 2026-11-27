@@ -1,6 +1,6 @@
 [package]
 name = "seleniumbase-rs-web"
-version = "0.9.4"
+version = "0.10.0"
 edition = "2024"
 license = "MIT"
 description = "Web front end and interactive automation studio for seleniumbase-rs."
@@ -8,7 +8,8 @@ repository = "https://github.com/MustCodeAl/seleniumbase-rs"
 publish = false
 
 [dependencies]
-seleniumbase-rs = { git = "https://github.com/MustCodeAl/seleniumbase-rs", branch = "main", features = ["mcp-server", "test-util", "plugins-builtin"] }
+seleniumbase-rs = { git = "https://github.com/MustCodeAl/seleniumbase-rs", branch = "main", features = ["mcp-server", "test-util"] }
+seleniumbase-rs-plugin-extractor = { git = "https://github.com/MustCodeAl/seleniumbase-rs-plugins", branch = "main" }
 tokio = { version = "1.40", features = ["full"] }
 actix-web = "4"
 actix-files = "0.6"

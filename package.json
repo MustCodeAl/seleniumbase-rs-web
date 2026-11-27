@@ -1,10 +1,11 @@
 {
   "name": "seleniumbase-rs-web",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Interactive Web Studio & GUI for seleniumbase-rs",
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "watch": "tsc --watch",
     "tsync": "tsync -i src/main.rs -o src/types.ts"
   },

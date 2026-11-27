@@ -16,11 +16,13 @@ default:
 fmt:
   stage: check
   script:
+    - rustup component add rustfmt
     - cargo fmt --all -- --check
 
 clippy:
   stage: check
   script:
+    - rustup component add clippy
     - cargo clippy --all-targets -- -D warnings
 
 test:
@@ -31,6 +33,7 @@ test:
 frontend:
   stage: check
   image: node:20-bookworm
+  before_script: []
   script:
     - if [ -f package-lock.json ]; then npm ci; else npm install; fi
     - npm run typecheck

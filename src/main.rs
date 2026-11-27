@@ -9,11 +9,11 @@ use tracing::{Level, info};
 use tracing_subscriber::FmtSubscriber;
 use tsync::tsync;
 
-use seleniumbase_rs::extract::html_to_markdown;
 use seleniumbase_rs::utilities::importer::{
     ScriptImportOptions, import_playwright, import_puppeteer,
 };
 use seleniumbase_rs::utilities::python_importer::{ImportOptions, PythonSource, import_python};
+use seleniumbase_rs_plugin_extractor::html::html_to_markdown;
 
 #[derive(Clone)]
 struct AppState {}
@@ -270,7 +270,7 @@ async fn extract_markdown(payload: web::Json<ExtractRequest>) -> impl Responder 
 
     if let Some(ref url) = payload.url {
         let sample_md = format!(
-            "# Extracted Content: {}\n\n- Zero-copy Arena DOM parsed successfully\n- Token reduction: ~88% LLM context efficiency\n- Engine: Pure CDP v0.9.1\n\n```rust\nlet md = page.markdown().await?;\n```",
+            "# Extracted Content: {}\n\n- HTML converted via seleniumbase-rs-plugin-extractor\n- Engine: Pure CDP v0.10.0\n\n```rust\nlet html = page.content().await?;\nlet md = html_to_markdown(&html);\n```",
             url
         );
         return HttpResponse::Ok().json(ExtractResponse {
